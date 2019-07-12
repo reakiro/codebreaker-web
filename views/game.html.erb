@@ -48,16 +48,13 @@
             </div>
             <hr class="mb-4">
 
-            <form method="post" action="http://localhost:9292/submit_answer">
+            <form method="post" action="/submit_answer">
               <div class="form-group">
                 <input class="form-control guess_input" name="number" pattern="^[1-6]{4}$" placeholder="1234" required="" autocomplete="off">
               </div>
               <div class="form-group guess_markers_list">
                 <div id="guess_marker">
-                  <button type="button" class="btn btn-success marks" disabled>+</button>
-                  <button type="button" class="btn btn-primary marks" disabled>-</button>
-                  <button type="button" class="btn btn-danger marks" disabled>x</button>
-                  <button type="button" class="btn btn-danger marks" disabled>x</button>
+                  <button type="button" class="btn btn-success marks" disabled><%= result %></button>
                 </div>
               </div>
               <hr class="mb-4">
@@ -65,13 +62,14 @@
               <button type="submit" class="btn btn-primary btn-lg">
                 Submit
               </button>
-              <a class="btn btn-warning btn-lg float-right" role="button">
+              <a class="btn btn-primary btn-lg" href="/" role="button">
+                Home
+              </a>
+              <a class="btn btn-warning btn-lg" href="/rules" role="button">Rules</a>
+              <a class="btn btn-warning btn-lg float-right" role="button" href="/show_hint">
                 Show hint!
                 <span class="badge badge-light">
-                  6
-                </span>
-                <span class="badge badge-light">
-                  3
+                  <%= hint %>
                 </span>
               </a>
             </form>
