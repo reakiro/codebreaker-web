@@ -8,7 +8,7 @@ module Validations
   end
 
   def won?
-    result == "++++"
+    result == '++++'
   end
 
   def lost?

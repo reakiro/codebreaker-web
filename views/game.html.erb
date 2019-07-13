@@ -58,7 +58,11 @@
               </div>
               <div class="form-group guess_markers_list">
                 <div id="guess_marker">
-                  <button type="button" class="btn btn-success marks" disabled><%= result %></button>
+                  <% unless result.nil? %>
+                    <% result.split("").each do |number| %>
+                  <button type="button" class="btn" disabled><%= number %></button>
+                    <% end %>
+                  <% end %>
                 </div>
               </div>
               <hr class="mb-4">

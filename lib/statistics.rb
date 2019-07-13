@@ -1,15 +1,14 @@
 class Statistics
-
-  STATS_FILE = 'stats.yml'
+  STATS_FILE = 'stats.yml'.freeze
 
   attr_accessor :name, :level, :attempts_used, :hints_used, :date
 
   def initialize
-    @name = ""
-    @level = ""
+    @name = ''
+    @level = ''
     @attempts_used = 0
     @hints_used = 0
-    @date = ""
+    @date = ''
   end
 
   def save

@@ -10,7 +10,6 @@ require_relative 'validations'
 require_relative 'statistics'
 
 class Racker
-
   include GameData
   include GameControllers
   include FileManager

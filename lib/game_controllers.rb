@@ -1,4 +1,10 @@
 module GameControllers
+  LEVEL = {
+    simple: Codebreaker::Game.new(15, 2),
+    middle: Codebreaker::Game.new(10, 1),
+    hard: Codebreaker::Game.new(5, 1)
+  }.freeze
+
   def homepage
     if active_game?
       Rack::Response.new(render('game.html.erb'))
@@ -22,7 +28,7 @@ module GameControllers
   end
 
   def rules
-    puts "hello"
+    puts 'hello'
     Rack::Response.new(render('rules.html.erb'))
   end
 
@@ -50,15 +56,10 @@ module GameControllers
   def set_params
     Rack::Response.new do |response|
       @request.session.clear
-
       @request.session[:player_name] = @request.params['player_name']
       @request.session[:level] = @request.params['level']
-      
-      case @request.params['level']
-      when 'simple' then @game = Codebreaker::Game.new(15, 2)
-      when 'middle' then @game = Codebreaker::Game.new(10, 1)
-      when 'hard'   then @game = Codebreaker::Game.new(5, 1)
-      end
+
+      @game = LEVEL[@request.params['level'].to_sym]
 
       assign_values(@game)
       store_game(@game)
@@ -71,11 +72,11 @@ module GameControllers
     Rack::Response.new do |response|
       @game = load_game
 
-      unless @game.hint.nil?
-        @request.session[:hint] = @game.hint
-      else
-        @request.session[:hint] = "no hints left"
-      end
+      @request.session[:hint] = if @game.hint.nil?
+                                  'no hints left'
+                                else
+                                  @game.hint
+                                end
 
       store_game(@game)
 
@@ -95,7 +96,7 @@ module GameControllers
         response.redirect('/lose')
       elsif won?
         response.redirect('/win')
-      else 
+      else
         response.redirect('/game')
       end
     end
@@ -115,7 +116,7 @@ module GameControllers
     @statistics.level = level
     @statistics.attempts_used = attempts_used
     @statistics.hints_used = hints_used
-    @statistics.date = DateTime.now.strftime("%d/%m/%Y %H:%M:%S")
+    @statistics.date = DateTime.now.strftime('%d/%m/%Y %H:%M:%S')
     @statistics.save
   end
 end

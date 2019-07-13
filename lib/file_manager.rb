@@ -1,6 +1,5 @@
 module FileManager
-
-  GAME_FILE = 'game.yml'
+  GAME_FILE = 'game.yml'.freeze
 
   def render(template)
     path = File.expand_path("../views/#{template}", File.dirname(__FILE__))
