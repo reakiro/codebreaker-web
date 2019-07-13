@@ -1,11 +1,14 @@
 module GameControllers
   def homepage
-    store_game([])
-    Rack::Response.new(render('menu.html.erb'))
+    if active_game?
+      Rack::Response.new(render('game.html.erb'))
+    else
+      Rack::Response.new(render('menu.html.erb'))
+    end
   end
 
   def game
-    if valid_game?
+    if active_game?
       Rack::Response.new(render('game.html.erb'))
     else
       Rack::Response.new do |response|
@@ -25,6 +28,7 @@ module GameControllers
 
   def win
     if won?
+      save_statistics
       Rack::Response.new(render('win.html.erb'))
     else
       Rack::Response.new do |response|
@@ -47,6 +51,7 @@ module GameControllers
     Rack::Response.new do |response|
       @request.session.clear
 
+      @request.session[:player_name] = @request.params['player_name']
       @request.session[:level] = @request.params['level']
       
       case @request.params['level']
@@ -54,10 +59,6 @@ module GameControllers
       when 'middle' then @game = Codebreaker::Game.new(10, 1)
       when 'hard'   then @game = Codebreaker::Game.new(5, 1)
       end
-
-      @game.stats[:name] = @request.params['player_name']
-      @game.stats[:level] = @request.params['level']
-      @game.stats[:date] = DateTime.now
 
       assign_values(@game)
       store_game(@game)
@@ -103,9 +104,18 @@ module GameControllers
   private
 
   def assign_values(game)
-    @request.session[:player_name] = game.stats[:name]
     @request.session[:secret_number] = game.secret_number
     @request.session[:attempts_number] = game.attempts_number
     @request.session[:hints_number] = game.hints_number
+  end
+
+  def save_statistics
+    @statistics = Statistics.new
+    @statistics.name = player_name
+    @statistics.level = level
+    @statistics.attempts_used = attempts_used
+    @statistics.hints_used = hints_used
+    @statistics.date = DateTime.now.strftime("%d/%m/%Y %H:%M:%S")
+    @statistics.save
   end
 end

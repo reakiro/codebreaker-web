@@ -7,6 +7,7 @@ require_relative 'game_data'
 require_relative 'game_controllers'
 require_relative 'file_manager'
 require_relative 'validations'
+require_relative 'statistics'
 
 class Racker
 

@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/reakiro/codebreaker-gem
-  revision: 3b2f722dce20bf083789dbe77d255ad3de8cf92d
+  revision: b0f7dbe0b97e878627bddcf56a420a2e0d05e5a2
   branch: master
   specs:
     codebreaker (0.1.0)

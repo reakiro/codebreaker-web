@@ -30,13 +30,18 @@ module GameData
   def attempts_used
     @game = load_game
 
-    @game.stats[:attempts_used]
+    attempts_number - @game.attempts_number
   end
 
   def hints_used
     @game = load_game
 
-    @game.stats[:hints_used]
+    hints_number - @game.hints_number
+  end
+
+  def stats
+    @statistics = Statistics.new
+    @statistics.stats
   end
 
   def rules_txt
