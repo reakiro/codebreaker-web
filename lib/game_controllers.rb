@@ -56,8 +56,6 @@ module GameControllers
   def set_params
     Rack::Response.new do |response|
       @request.session.clear
-      @request.session[:player_name] = @request.params['player_name']
-      @request.session[:level] = @request.params['level']
 
       @game = LEVEL[@request.params['level'].to_sym]
 
@@ -71,12 +69,9 @@ module GameControllers
   def show_hint
     Rack::Response.new do |response|
       @game = load_game
+      hint = @game.hint
 
-      @request.session[:hint] = if @game.hint.nil?
-                                  'no hints left'
-                                else
-                                  @game.hint
-                                end
+      @request.session[:hints] << hint unless hint.nil?
 
       store_game(@game)
 
@@ -89,7 +84,7 @@ module GameControllers
       @game = load_game
 
       @request.session[:result] = @game.process(@request.params['number'])
-
+      
       store_game(@game)
 
       if lost? && !won?
@@ -105,6 +100,9 @@ module GameControllers
   private
 
   def assign_values(game)
+    @request.session[:player_name] = @request.params['player_name']
+    @request.session[:level] = @request.params['level']
+    @request.session[:hints] = []
     @request.session[:secret_number] = game.secret_number
     @request.session[:attempts_number] = game.attempts_number
     @request.session[:hints_number] = game.hints_number

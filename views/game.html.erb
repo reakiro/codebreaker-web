@@ -74,11 +74,15 @@
                 Home
               </a>
               <a class="btn btn-warning btn-lg" href="/rules" role="button">Rules</a>
-              <a class="btn btn-warning btn-lg float-right" role="button" href="/show_hint">
+              <a class="btn btn-warning btn-lg float-right <%= hints_used >= hints_number ? 'disabled' : '' %>" role="button" href="/show_hint">
                 Show hint!
-                <span class="badge badge-light">
-                  <%= hint %>
-                </span>
+                <% unless hints.empty? %>
+                  <% hints.each do |hint| %>
+                  <span class="badge badge-light">
+                    <%= hint %>
+                  </span>
+                  <% end %>
+                <% end %>
               </a>
             </form>
           </div>

@@ -15,8 +15,8 @@ module GameData
     @request.session[:hints_number]
   end
 
-  def hint
-    @request.session[:hint]
+  def hints
+    @request.session[:hints]
   end
 
   def result
