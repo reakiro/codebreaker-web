@@ -84,7 +84,7 @@ module GameControllers
       @game = load_game
 
       @request.session[:result] = @game.process(@request.params['number'])
-      
+
       store_game(@game)
 
       if lost? && !won?

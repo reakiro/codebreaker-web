@@ -6,5 +6,8 @@ gem 'codebreaker', git: 'https://github.com/reakiro/codebreaker-gem', branch: 'm
 gem 'fasterer'
 gem 'pry'
 gem 'rack'
+gem 'rack-test'
+gem 'rspec'
 gem 'rubocop'
 gem 'rubocop-rspec'
+gem 'simplecov'
