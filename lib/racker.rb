@@ -1,23 +1,40 @@
 require 'erb'
+require 'yaml'
+require 'date'
 require 'pry'
+require 'codebreaker'
+require_relative 'game_data'
+require_relative 'game_controllers'
+require_relative 'file_manager'
+require_relative 'validations'
+require_relative 'statistics'
 
 class Racker
-  def call(env)
-    request = Rack::Request.new(env)
-    case request.path
-    when '/'           then Rack::Response.new(render('menu.html.erb'))
-    when '/game'       then Rack::Response.new(render('game.html.erb'))
-    when '/statistics' then Rack::Response.new(render('statistics.html.erb'))
-    when '/win'        then Rack::Response.new(render('win.html.erb'))
-    when '/lose'       then Rack::Response.new(render('lose.html.erb'))
-    else Rack::Response.new('Not Found', 404)
-    end
+  include GameData
+  include GameControllers
+  include FileManager
+  include Validations
+
+  def self.call(env)
+    new(env).response.finish
   end
 
-  private
+  def initialize(env)
+    @request = Rack::Request.new(env)
+  end
 
-  def render(template)
-    path = File.expand_path("../views/#{template}", File.dirname(__FILE__))
-    ERB.new(File.read(path)).result(binding)
+  def response
+    case @request.path
+    when '/'              then choose_path
+    when '/game'          then choose_path
+    when '/statistics'    then statistics
+    when '/win'           then win
+    when '/lose'          then lose
+    when '/rules'         then rules
+    when '/set_params'    then set_params
+    when '/show_hint'     then show_hint
+    when '/submit_answer' then submit_answer
+    else Rack::Response.new('Not Found', 404)
+    end
   end
 end

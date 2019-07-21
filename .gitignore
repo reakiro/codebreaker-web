@@ -1,2 +1,4 @@
 .history
 .DS_Store
+stats.yml
+coverage/
