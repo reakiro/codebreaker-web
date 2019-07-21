@@ -1,10 +1,6 @@
 module Validations
   def active_game?
-    valid_game? && !won? && !lost?
-  end
-
-  def valid_game?
-    load_game != []
+    game && !won? && !lost?
   end
 
   def won?
@@ -12,8 +8,8 @@ module Validations
   end
 
   def lost?
-    @game = load_game
+    @game = game
 
-    @game.lost? if valid_game?
+    @game.lost? if game
   end
 end

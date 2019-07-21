@@ -1,4 +1,8 @@
 module GameData
+  def game
+    @request.session[:game]
+  end
+
   def player_name
     @request.session[:player_name]
   end
@@ -28,13 +32,13 @@ module GameData
   end
 
   def attempts_used
-    @game = load_game
+    @game = game
 
     attempts_number - @game.attempts_number
   end
 
   def hints_used
-    @game = load_game
+    @game = game
 
     hints_number - @game.hints_number
   end
@@ -52,5 +56,9 @@ module GameData
       rules << line
     end
     rules
+  end
+
+  def store_game(game)
+    @request.session[:game] = game
   end
 end

@@ -1,26 +1,16 @@
 module GameControllers
   LEVEL = {
-    simple: Codebreaker::Game.new(15, 2),
-    middle: Codebreaker::Game.new(10, 1),
-    hard: Codebreaker::Game.new(5, 1)
+    simple: { attempts: 15, hints: 2 },
+    middle: { attempts: 10, hints: 1 },
+    hard: { attempts: 5, hints: 1 }
   }.freeze
 
   def homepage
-    if active_game?
-      Rack::Response.new(render('game.html.erb'))
-    else
-      Rack::Response.new(render('menu.html.erb'))
-    end
+    Rack::Response.new(render('menu.html.erb'))
   end
 
-  def game
-    if active_game?
-      Rack::Response.new(render('game.html.erb'))
-    else
-      Rack::Response.new do |response|
-        response.redirect('/')
-      end
-    end
+  def gamepage
+    Rack::Response.new(render('game.html.erb'))
   end
 
   def statistics
@@ -28,7 +18,6 @@ module GameControllers
   end
 
   def rules
-    puts 'hello'
     Rack::Response.new(render('rules.html.erb'))
   end
 
@@ -57,7 +46,8 @@ module GameControllers
     Rack::Response.new do |response|
       @request.session.clear
 
-      @game = LEVEL[@request.params['level'].to_sym]
+      @game = Codebreaker::Game.new(LEVEL[@request.params['level'].to_sym][:attempts],
+                                    LEVEL[@request.params['level'].to_sym][:hints])
 
       assign_values(@game)
       store_game(@game)
@@ -68,7 +58,7 @@ module GameControllers
 
   def show_hint
     Rack::Response.new do |response|
-      @game = load_game
+      @game = game
       hint = @game.hint
 
       @request.session[:hints] << hint unless hint.nil?
@@ -81,7 +71,7 @@ module GameControllers
 
   def submit_answer
     Rack::Response.new do |response|
-      @game = load_game
+      @game = game
 
       @request.session[:result] = @game.process(@request.params['number'])
 
@@ -99,13 +89,21 @@ module GameControllers
 
   private
 
-  def assign_values(game)
+  def choose_path
+    if active_game?
+      gamepage
+    else
+      homepage
+    end
+  end
+
+  def assign_values(new_game)
     @request.session[:player_name] = @request.params['player_name']
     @request.session[:level] = @request.params['level']
     @request.session[:hints] = []
-    @request.session[:secret_number] = game.secret_number
-    @request.session[:attempts_number] = game.attempts_number
-    @request.session[:hints_number] = game.hints_number
+    @request.session[:secret_number] = new_game.secret_number
+    @request.session[:attempts_number] = new_game.attempts_number
+    @request.session[:hints_number] = new_game.hints_number
   end
 
   def save_statistics

@@ -25,8 +25,8 @@ class Racker
 
   def response
     case @request.path
-    when '/'              then homepage
-    when '/game'          then game
+    when '/'              then choose_path
+    when '/game'          then choose_path
     when '/statistics'    then statistics
     when '/win'           then win
     when '/lose'          then lose

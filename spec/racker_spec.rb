@@ -4,7 +4,6 @@ require 'erb'
 describe Racker do
   include Rack::Test::Methods
 
-  GAME_FILE = 'game.yml'.freeze
   STATS_FILE = 'stats.yml'.freeze
 
   PATHS = {
@@ -36,10 +35,6 @@ describe Racker do
     let(:player_name) { 'darina' }
 
     context 'when no active game' do
-      before do
-        File.delete(GAME_FILE) if File.exist?(GAME_FILE)
-      end
-
       it 'goes to homepage' do
         get PATHS[:homepage]
         expect(last_response.body).to include(TEXT[:homepage])
@@ -66,13 +61,8 @@ describe Racker do
     let(:levels) { [simple, middle, hard] }
 
     context 'when no active game' do
-      before do
-        File.delete(GAME_FILE) if File.exist?(GAME_FILE)
-      end
-
       it 'goes to homepage' do
         get PATHS[:game]
-        follow_redirect!
         expect(last_response.body).to include(TEXT[:homepage])
       end
     end
@@ -129,11 +119,14 @@ describe Racker do
   describe 'win' do
     let(:player_name) { 'darina' }
     let(:level) { 'simple' }
+    let(:game) { Codebreaker::Game.new(15, 2) }
 
     context 'when there\'s a winner' do
       before do
         get PATHS[:set_params], player_name: player_name, level: level
-        get PATHS[:submit_answer], number: YAML.load_file(GAME_FILE).secret_number.join.to_i
+        env 'rack.session', game: game
+        game.instance_variable_set(:@secret_number, [1, 2, 3, 4])
+        get PATHS[:submit_answer], number: 1234
       end
 
       it 'opens win page' do
@@ -155,10 +148,6 @@ describe Racker do
     end
 
     context 'when there\'s no winner and no active game' do
-      before do
-        File.delete(GAME_FILE) if File.exist?(GAME_FILE)
-      end
-
       it 'redirects to homepage' do
         get PATHS[:win]
         follow_redirect!
@@ -198,10 +187,6 @@ describe Racker do
     end
 
     context 'when there\'s no loser and no active game' do
-      before do
-        File.delete(GAME_FILE) if File.exist?(GAME_FILE)
-      end
-
       it 'redirects to homepage' do
         get PATHS[:lose]
         follow_redirect!
